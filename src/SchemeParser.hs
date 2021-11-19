@@ -95,7 +95,7 @@ pList str p = surroundWith' '(' ')' $ manySpace *> string str *> manySpace *> p 
 pManyList s = pList s . separateBy someSpace
 pSomeList s = pList s . someSeparateBy someSpace
 
-pVariable = (:) <$> initial <*> many subsequent
+pVariable = ((:) <$> initial <*> many subsequent) <|> ((:[]) <$> oneOfChar "+-")
     where
         initial = alpha <|> oneOfChar "!$%&*/:<=>?~_^"
         subsequent = alphaNum <|> oneOfChar ".+-"

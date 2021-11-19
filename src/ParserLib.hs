@@ -29,7 +29,7 @@ instance Functor Parser where
         where
             parser xs = do
                 val <- p xs
-                Just $ (f <$> val)
+                Just (f <$> val)
 
 instance Applicative Parser where
     pure v = Parser parser
@@ -40,6 +40,14 @@ instance Applicative Parser where
                 (input' , v1) <- x input
                 (input'', v2) <- y input'
                 pure (input'', f v1 v2)
+
+instance Monad Parser where
+    return = pure
+    (Parser x) >>= f = Parser parser
+        where
+            parser input = do
+                (input' , v1) <- x input
+                runParser (f v1) input'
 
 string :: String -> Parser String
 string = sequenceA . map char
@@ -78,5 +86,3 @@ surroundWith :: Char -> Parser a -> Parser a
 surroundWith c p = char c *> p <* char c
 surroundWith' :: Char -> Char -> Parser a -> Parser a
 surroundWith' c1 c2 p = char c1 *> p <* char c2
-
---runParser (separateBy (char ',') (int)) "123,1234,12,5"
