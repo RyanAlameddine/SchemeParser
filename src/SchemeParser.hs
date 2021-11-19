@@ -2,26 +2,17 @@ module SchemeParser where
 
 import ParserLib
 import Control.Applicative
-
--- parseFile :: FilePath -> IO (Maybe (String, SchemeObject))
--- parseFile path = do
---     text <- readFile path 
---     return $ runParser schemeFile text 
-
 -- items taken from grammar https://www.scheme.com/tspl2d/grammar.html
 
 --this is simplified
 type Program = [Form]
-
 data Form =
     FDefinition Definition
     | FExpression Expression
     deriving Show
-
 data Definition =
     DVariable [Variable] Body
     deriving Show
-
 data Expression =
     EConstant Constant
     | EVariable Variable
@@ -29,21 +20,17 @@ data Expression =
     | EIf Expression Expression (Maybe Expression)
     | EApplication Expression [Expression]
     deriving Show
-
 data Constant =
     CBool Bool
     | CNumber Integer
     | CCharacter Char
     | CString String
     deriving Show
-
 data Body =
     Body [Definition] [Expression]
     deriving Show
-
 type Variable = String
 
-program :: Parser Program
 program = manySpace *> many (form <* manySpace)
 
 form :: Parser Form
